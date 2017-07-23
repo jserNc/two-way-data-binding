@@ -60,14 +60,15 @@
             var name = attr[i].nodeValue; // 获取v-model绑定的属性名
             node.addEventListener('input', function (e) {
               // 给相应的data属性赋值，进而触发该属性的set方法
-              vm[name] = e.target.value;
+              vm.data[name] = e.target.value;
             });
             node.value = vm[name]; // 将data的值赋给该node
             node.removeAttribute('v-model');
+            new Watcher(vm, node, name, 'input');
           }
         };
 
-        new Watcher(vm, node, name, 'input');
+
       }
       // 节点类型为text
       if (node.nodeType === 3) {
@@ -84,7 +85,7 @@
       Dep.target = this;
       this.name = name;
       this.node = node;
-      this.vm = vm;
+      this.vm = vm.data;
       this.nodeType = nodeType;
       this.update();
       Dep.target = null;
@@ -126,7 +127,7 @@
       this.data = options.data;
       var data = this.data;
 
-      observe(data, this);
+      observe(data, this.data);
 
       var id = options.el;
       var dom = nodeToFragment(document.getElementById(id), this);
